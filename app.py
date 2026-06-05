@@ -128,10 +128,7 @@ def close_db(exception):
 
 
 def init_db():
-    """初始化数据库（优先从 OSS 恢复备份）"""
-    # 尝试从 OSS 恢复已有数据库（Railway 等无状态环境）
-    restore_db_from_oss()
-
+    """初始化数据库表"""
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
@@ -2069,6 +2066,8 @@ if __name__ == '__main__':
     print("  刃客坊认证服务 (RKF Auth Service)")
     print("=" * 50)
 
+    # 从 OSS 恢复数据库（Railway 无状态环境）
+    restore_db_from_oss()
     init_db()
 
     # 自动配置 OSS CORS（让浏览器可以直接上传到 OSS）
