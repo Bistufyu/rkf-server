@@ -695,14 +695,10 @@ def api_send_sms():
                 'message': '验证码已发送，请注意查收短信'
             })
         else:
-            # SMS 发送失败时，如果开启了 SMS_BYPASS 模式则放行（Railway 等境外部署用）
-            if os.environ.get('SMS_BYPASS') == 'true':
-                log.warning("[SMS] Bypass: code=%s for %s (reason: %s)", code, phone, sms_result.get('msg', ''))
-                return jsonify({
-                    'success': True,
-                    'message': '验证码已发送',
-                    'debug_code': code
-                })
+            # SMS 发送失败（Railway 等境外部署互亿无线会报IP不符）
+            # 此时验证码已存在数据库，但用户收不到短信
+            # 需要在 Railway 环境变量中添加外部短信服务配置
+            log.error("[SMS] Send failed for %s: %s", phone[-4:], sms_result.get('msg', ''))
             return jsonify({
                 'success': False,
                 'error': sms_result['msg']
