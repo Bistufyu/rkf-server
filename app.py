@@ -695,6 +695,14 @@ def api_send_sms():
                 'message': '验证码已发送，请注意查收短信'
             })
         else:
+            # SMS 发送失败时，如果开启了 SMS_BYPASS 模式则放行（Railway 等境外部署用）
+            if os.environ.get('SMS_BYPASS') == 'true':
+                log.warning("[SMS] Bypass: code=%s for %s (reason: %s)", code, phone, sms_result.get('msg', ''))
+                return jsonify({
+                    'success': True,
+                    'message': '验证码已发送',
+                    'debug_code': code
+                })
             return jsonify({
                 'success': False,
                 'error': sms_result['msg']
