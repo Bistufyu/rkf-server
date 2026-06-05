@@ -1,0 +1,7 @@
+data/
+venv/
+__pycache__/
+*.pyc
+.env
+auth.log
+auth.pid
